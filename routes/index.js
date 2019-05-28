@@ -19,7 +19,7 @@ mongo.connect(server, function (err, response) {
         console.log("Connection established successfully in Mongodb");
            db= response.db('db_visitors');
         // console.log('db -> ', db)
-        //db.collection("login").insertOne({userid:"princy",password:"1234"})
+          // db.collection("login").insertOne({userid:"anjana",password:"1234"})
         //  db.collection("items").insertOne(
         //     { item: "canvas", qty: 100, tags: ["cotton"], size: { h: 28, w: 35.5, uom: "cm" } }
         //  )
@@ -131,21 +131,22 @@ router.post("/api/Gettime", function (req, res, next) {
         });
 
 })
-router.get("/api/login",function(req,res,next){
-    username=req.body.userid;
-    password=req.body.password;
-    console.log("(((((((((");
-     var myquery={_id:username,password:password}
-     var output=db.collection("login").find(myquery)
-     if(output == username)
-       {
-           console.log("found")
-       }
-       else{
-           console.log("not found");
-       }
+router.post("/api/login",function(req,res,next){
+    username=req.body['userName'];
+    passwd=req.body['password'];
+     var myquery={userid:username,password:passwd}
+     let output = db.collection("login").find(myquery);
+     output.each((err,data)=>{
+        if(data){
+            if(data.userid === username && data.password === passwd){
+                res.status(200).send({message:'login successful.'})
+            }  
+            else{
+            res.status(401).send({message:'login failure.'})
+            }
+        }
+    })
 })
-
 module.exports = router;
 
 
